@@ -20,8 +20,9 @@ int main()
 	std::shared_ptr<Computer> pc = std::make_shared<Computer>();
 
 	
+  const int fps = 60;
 
-	SetTargetFPS(60);
+	SetTargetFPS(fps);
 
 	Texture floor = LoadTexture("floor.png");
 
@@ -38,8 +39,6 @@ int main()
 		gameManager::objectVicinity(pc, playerPtr);
 		playerPtr->move();
 		playerPtr->buyWeed();
-		//playerPtr->inventory.placeInventoryItem(EntitiesDrawnToWorld);
-	///	playerPtr->inventory.display(EntitiesDrawnToWorld);
 		playerPtr->inventory.dragItem(EntitiesDrawnToWorld);
 		playerPtr->inventory.drawInventoryMenu();
 		playerPtr->inventory.scrollInventoryMenu();

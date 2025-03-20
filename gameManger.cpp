@@ -42,6 +42,9 @@ void gameManager::objectVicinity(std::shared_ptr<Entity> object, Entity* player)
         DrawText("E", (player->getPositionX() - 10), (player->getPositionY() - 10), 10, WHITE);
 
         if (IsKeyPressed(KEY_E))
-            object->interactionMenu();
+            object->setIsInteractionMenuShowing(true);
+
+        object->interactionMenu();
+        
     }
 }

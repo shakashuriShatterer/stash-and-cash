@@ -19,6 +19,7 @@ Entity::Entity(const std::string& entityName)
     inventoryPosition = { 10,10 };
     isBeingDragged = false;
     isDraggable = false;
+    isInteractionMenuShowing = false;
 
 }
 void Entity::update() {};
@@ -104,6 +105,12 @@ void Entity::setIsDraggable(bool drag)
         std::cerr << "invalid value set to isDraggable" << std::endl;
 
 }
+
+void Entity::setIsInteractionMenuShowing(bool show)
+{
+  isInteractionMenuShowing = show;
+}
+
 // Getter definitions
 const Texture& Entity::getTexture() const{ return texture; }
 int Entity::getTextureWidth() const{ return texture.width; }
@@ -118,6 +125,7 @@ int Entity::getId() const { return id; }
 const std::string& Entity::getName() const { return name; }
 bool Entity::getIsBeingDragged() const { return isBeingDragged; }
 bool Entity::getIsDraggable() const { return isDraggable; }
+bool Entity::getIsInteractionMenuShowing() const {return isInteractionMenuShowing; }
 
 
 void Entity::interactionMenu()
@@ -165,6 +173,8 @@ Ganja::Ganja()
 
 void Ganja::interactionMenu()
 {
+  if(getIsInteractionMenuShowing())
+		DrawRectangle(0, 0, GetRenderWidth(), GetRenderHeight(), Color{ 10,10,10,218 });
 }
 
 void Ganja::grow() 

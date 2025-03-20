@@ -19,6 +19,7 @@ private:
     const int id;
     bool isBeingDragged;
     bool isDraggable;
+    bool isInteractionMenuShowing;
 public:
     Entity(const std::string& );
     // Setters
@@ -33,6 +34,7 @@ public:
     void setInventoryPositionY(const float );
     void setIsBeingDragged(bool);
     void setIsDraggable(bool);
+    void setIsInteractionMenuShowing(bool);
     float scale = 1;
     
 
@@ -51,6 +53,7 @@ public:
     const std::string& getName() const;
     bool getIsBeingDragged() const;
     bool getIsDraggable() const;
+    bool getIsInteractionMenuShowing() const;
 
     virtual void interactionMenu();
 };

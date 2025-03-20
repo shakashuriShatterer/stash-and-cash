@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <math.h>
 #include "player.h"
 #include "gameManager.h"
 
