@@ -9,6 +9,6 @@
 struct gameManager {
   gameManager();
   static void rectCollision(std::shared_ptr<Entity>, std::unique_ptr<Player> &);
-  static void objectVicinity(std::shared_ptr<Entity>,
+  static bool objectVicinity(std::shared_ptr<Entity>,
                              std::unique_ptr<Player> &);
 };

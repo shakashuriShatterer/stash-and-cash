@@ -127,11 +127,14 @@ void Computer::interactionMenu() {
 }
 
 PlantPot::PlantPot() : Entity("plantPot") {
-  test = 1;
+  hasBeenPlanted = false;
   setTexture(LoadTexture("plant_pot.png"));
   setInventoryPosition({20, 10});
   setTextureSize(50, 50);
 }
+
+void PlantPot::setHasBeenPlanted(bool planted) { hasBeenPlanted = planted; }
+bool PlantPot::getHasBeenPlanted() { return hasBeenPlanted; }
 
 void PlantPot::interactionMenu() {
   std::cout << "InteratctionMenue: " << getId();

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <memory>
 
 #include "gameManager.h"
@@ -38,7 +39,13 @@ int main() {
 
     for (auto &entity : EntitiesDrawnToWorld) {
       DrawTextureEx(entity->getTexture(), entity->getPosition(), 0, 1, WHITE);
-      gameManager::objectVicinity(entity, player);
+      if (gameManager::objectVicinity(entity, player)) {
+
+        if (entity->getName() == "plantPot")
+          player->inventory.drawWeedInventory(entity, EntitiesDrawnToWorld);
+      }
+    }
+    for (auto &entity : EntitiesDrawnToWorld) {
       gameManager::rectCollision(entity, player);
     }
 

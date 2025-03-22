@@ -70,11 +70,13 @@ public:
 
 class PlantPot : public Entity {
 private:
-  int test;
+  bool hasBeenPlanted;
 
 public:
   PlantPot();
   void interactionMenu() override;
+  void setHasBeenPlanted(bool);
+  bool getHasBeenPlanted();
 };
 
 class Ganja : public Entity {

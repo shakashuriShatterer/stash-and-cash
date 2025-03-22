@@ -3,6 +3,9 @@
 #include <algorithm>
 #include <iostream>
 #include <math.h>
+#include <memory>
+#include <raylib.h>
+#include <vector>
 
 Player::Player() : Entity("player") {
   setTexture(LoadTexture("sprite-0001.png"));
@@ -53,8 +56,9 @@ void Player::buyWeed() {
 
   if (IsKeyPressed(KEY_B) && !keyPessedOnce) {
     std::shared_ptr<PlantPot> newPot = std::make_shared<PlantPot>();
-    inventory.inventoryVector.push_back(newPot);
-    std::cout << "potId: " << newPot->getId() << "\n";
+    std::shared_ptr<Ganja> newWeed = std::make_shared<Ganja>();
+    inventory.itemInventoryVector.push_back(newPot);
+    inventory.weedInventoryVector.push_back(newWeed);
     keyPessedOnce = true;
   }
   if (IsKeyReleased(KEY_B))
@@ -86,7 +90,8 @@ void Player::Inventory::drawInventoryMenu() {
     int currentRow = 0;
     int currentColumn = 0;
 
-    for (auto it = inventoryVector.begin(); it < inventoryVector.end(); it++) {
+    for (auto it = itemInventoryVector.begin(); it < itemInventoryVector.end();
+         it++) {
       float posX = startX + currentColumn * spacing;
       float posY = startY + scrollOffset + currentRow * spacing;
 
@@ -104,15 +109,77 @@ void Player::Inventory::drawInventoryMenu() {
       }
     }
   } else {
-    for (auto &item : inventoryVector)
+    for (auto &item : itemInventoryVector)
       item->setIsDraggable(false);
+  }
+}
+
+void Player::Inventory::drawWeedInventory(
+    std::shared_ptr<Entity> &plantPot,
+    std::vector<std::shared_ptr<Entity>> &EntitiesDrawnToWorld) {
+  const float spacing = 50;
+  const float startX = 10.f;
+  float startY = 10.f;
+  const int maxItemsPerRow = (GetRenderWidth() - startX) / spacing;
+
+  if (IsKeyPressed(KEY_E))
+    isWeedInventoryShowing = true;
+  if (IsKeyPressed(KEY_Q))
+    isWeedInventoryShowing = false;
+
+  if (isWeedInventoryShowing) {
+    DrawRectangle(0, 0, GetRenderWidth(), GetRenderHeight(),
+                  Color{10, 10, 10, 218});
+    const std::string inventoryTip =
+        "Click on a weed item to plant in pot. press 'Q' to close.";
+    const int inventoryTipSize = MeasureText(inventoryTip.c_str(), 20);
+    const int inventoryTipPos = GetScreenWidth() / 2 - inventoryTipSize / 2;
+
+    DrawText(inventoryTip.c_str(), inventoryTipPos, GetScreenHeight() - 50, 20,
+             WHITE);
+
+    int currentRow = 0;
+    int currentColumn = 0;
+
+    for (size_t i = 0; i < weedInventoryVector.size(); i++) {
+      float posX = startX + currentColumn * spacing;
+      float posY = startY + scrollOffset + currentRow * spacing;
+
+      auto &weed = weedInventoryVector[i];
+
+      weed->setInventoryPosition({posX, posY});
+
+      DrawTextureEx(weed->getTexture(), weed->getInventoryPosition(), 0, 1,
+                    WHITE);
+
+      Rectangle boundingBox = {weed->getInventoryPositionX(),
+                               (weed->getInventoryPositionY()),
+                               static_cast<float>(weed->getTextureWidth()),
+                               static_cast<float>(weed->getTextureHeight())};
+      if (CheckCollisionPointRec(GetMousePosition(), boundingBox) &&
+          IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        weed->setPositionX(plantPot->getPositionX());
+        weed->setPositionY(plantPot->getPositionY() - 30);
+        EntitiesDrawnToWorld.push_back(weed);
+        weedInventoryVector.erase(weedInventoryVector.begin() + i);
+        isWeedInventoryShowing = false;
+        i--;
+      }
+
+      currentColumn++;
+
+      if (currentColumn >= maxItemsPerRow) {
+        currentColumn = 0;
+        currentRow++;
+      }
+    }
   }
 }
 
 void Player::Inventory::scrollInventoryMenu() {
   const float scrollSpeed = 10.0f;
 
-  if (isInventoryShowing) {
+  if (isInventoryShowing || isWeedInventoryShowing) {
     if (GetMouseWheelMove() < 0)
       scrollOffset -= scrollSpeed;
     if (GetMouseWheelMove() > 0)
@@ -122,15 +189,15 @@ void Player::Inventory::scrollInventoryMenu() {
 
 void Player::Inventory::dragItem(
     std::vector<std::shared_ptr<Entity>> &EntitiesDrawnToWorld) {
-  for (size_t i = 0; i < inventoryVector.size(); i++) {
-    auto &item = inventoryVector[i];
+  for (size_t i = 0; i < itemInventoryVector.size(); i++) {
+    auto &item = itemInventoryVector[i];
     if (item->getIsBeingDragged()) {
       item->setPosition(GetMousePosition());
       DrawTextureEx(item->getTexture(), item->getPosition(), 0, 1, WHITE);
       if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
         item->setIsBeingDragged(false);
         EntitiesDrawnToWorld.push_back(item);
-        inventoryVector.erase(inventoryVector.begin() + i);
+        itemInventoryVector.erase(itemInventoryVector.begin() + i);
         i--;
       }
     }
