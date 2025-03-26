@@ -1,10 +1,9 @@
 #include "player.h"
 #include "entity.h"
-#include <algorithm>
-#include <iostream>
-#include <math.h>
+#include "interactable.h"
+#include "pch.h"
+#include "plantPot.h"
 #include <memory>
-#include <raylib.h>
 #include <vector>
 
 Player::Player() : Entity("player") {
@@ -114,9 +113,7 @@ void Player::Inventory::drawInventoryMenu() {
   }
 }
 
-void Player::Inventory::drawWeedInventory(
-    std::shared_ptr<Entity> &plantPot,
-    std::vector<std::shared_ptr<Entity>> &EntitiesDrawnToWorld) {
+void Player::Inventory::drawWeedSelection() {
   const float spacing = 50;
   const float startX = 10.f;
   float startY = 10.f;
@@ -152,20 +149,6 @@ void Player::Inventory::drawWeedInventory(
       DrawTextureEx(weed->getTexture(), weed->getInventoryPosition(), 0, 1,
                     WHITE);
 
-      Rectangle boundingBox = {weed->getInventoryPositionX(),
-                               (weed->getInventoryPositionY()),
-                               static_cast<float>(weed->getTextureWidth()),
-                               static_cast<float>(weed->getTextureHeight())};
-      if (CheckCollisionPointRec(GetMousePosition(), boundingBox) &&
-          IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-        weed->setPositionX(plantPot->getPositionX());
-        weed->setPositionY(plantPot->getPositionY() - 30);
-        EntitiesDrawnToWorld.push_back(weed);
-        weedInventoryVector.erase(weedInventoryVector.begin() + i);
-        isWeedInventoryShowing = false;
-        i--;
-      }
-
       currentColumn++;
 
       if (currentColumn >= maxItemsPerRow) {
@@ -174,6 +157,22 @@ void Player::Inventory::drawWeedInventory(
       }
     }
   }
+}
+
+std::shared_ptr<Ganja> Player::Inventory::GetSelectedWeed() {
+  for (int i = 0; i < weedInventoryVector.size(); i++) {
+    auto &weed = weedInventoryVector[i];
+    Rectangle boundingBox = {weed->getInventoryPositionX(),
+                             (weed->getInventoryPositionY()),
+                             static_cast<float>(weed->getTextureWidth()),
+                             static_cast<float>(weed->getTextureHeight())};
+
+    if (CheckCollisionPointRec(GetMousePosition(), boundingBox) &&
+        IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+      return weed;
+    }
+  }
+  return nullptr;
 }
 
 void Player::Inventory::scrollInventoryMenu() {
@@ -188,7 +187,7 @@ void Player::Inventory::scrollInventoryMenu() {
 }
 
 void Player::Inventory::dragItem(
-    std::vector<std::shared_ptr<Entity>> &EntitiesDrawnToWorld) {
+    std::vector<std::shared_ptr<Interactable>> &EntitiesDrawnToWorld) {
   for (size_t i = 0; i < itemInventoryVector.size(); i++) {
     auto &item = itemInventoryVector[i];
     if (item->getIsBeingDragged()) {

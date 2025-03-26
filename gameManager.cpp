@@ -1,7 +1,6 @@
-#include <memory>
-#include <raylib.h>
 
 #include "gameManager.h"
+#include "pch.h"
 #include "player.h"
 
 void gameManager::rectCollision(std::shared_ptr<Entity> object,
@@ -50,12 +49,6 @@ bool gameManager::objectVicinity(std::shared_ptr<Entity> object,
               (player->getTextureHeight() + vicinityRange) &&
       object->getPositionY() + (object->getTextureHeight() + vicinityRange) >
           player->getPositionY()) {
-    // Draw letter E above player
-    DrawRectangle((player->getPositionX() - 15), (player->getPositionY() - 15),
-                  20, 20, BLACK);
-    DrawText("E", (player->getPositionX() - 10), (player->getPositionY() - 10),
-             10, WHITE);
-
     return true;
 
   } else

@@ -1,8 +1,5 @@
 #pragma once
-
-#include "raylib.h"
-#include <chrono>
-#include <string>
+#include "pch.h"
 
 struct IdManager {
   static int nextId;
@@ -66,17 +63,6 @@ public:
   void setDesktopTexture(const Texture &);
   // getters
   const Texture &getDesktopTexture() const;
-};
-
-class PlantPot : public Entity {
-private:
-  bool hasBeenPlanted;
-
-public:
-  PlantPot();
-  void interactionMenu() override;
-  void setHasBeenPlanted(bool);
-  bool getHasBeenPlanted();
 };
 
 class Ganja : public Entity {

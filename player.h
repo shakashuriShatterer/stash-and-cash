@@ -1,9 +1,10 @@
 #pragma once
 #include "entity.h"
-#include "raylib.h"
+#include "pch.h"
 #include <memory>
-#include <string>
 #include <vector>
+
+class Interactable;
 
 class Player : public Entity {
 private:
@@ -27,13 +28,13 @@ public:
     bool isInventoryShowing = false;
     bool isWeedInventoryShowing = false;
     float scrollOffset = 5;
-    std::vector<std::shared_ptr<Entity>> itemInventoryVector;
-    std::vector<std::shared_ptr<Entity>> weedInventoryVector;
+    std::vector<std::shared_ptr<Interactable>> itemInventoryVector;
+    std::vector<std::shared_ptr<Ganja>> weedInventoryVector;
     void drawInventoryMenu();
-    void drawWeedInventory(std::shared_ptr<Entity> &,
-                           std::vector<std::shared_ptr<Entity>> &);
+    void drawWeedSelection();
+    std::shared_ptr<Ganja> GetSelectedWeed();
     void scrollInventoryMenu();
-    void dragItem(std::vector<std::shared_ptr<Entity>> &);
+    void dragItem(std::vector<std::shared_ptr<Interactable>> &);
   };
   Inventory inventory;
 };

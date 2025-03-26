@@ -1,8 +1,5 @@
-#include <cstdio>
-#include <iostream>
-#include <raylib.h>
-
 #include "entity.h"
+#include "pch.h"
 
 int IdManager::nextId = 1;
 
@@ -124,20 +121,6 @@ Computer::Computer() : Entity("pc") {
 
 void Computer::interactionMenu() {
   DrawTextureEx(desktopTexture, {0, 0}, 0, 1.25f, WHITE);
-}
-
-PlantPot::PlantPot() : Entity("plantPot") {
-  hasBeenPlanted = false;
-  setTexture(LoadTexture("plant_pot.png"));
-  setInventoryPosition({20, 10});
-  setTextureSize(50, 50);
-}
-
-void PlantPot::setHasBeenPlanted(bool planted) { hasBeenPlanted = planted; }
-bool PlantPot::getHasBeenPlanted() { return hasBeenPlanted; }
-
-void PlantPot::interactionMenu() {
-  std::cout << "InteratctionMenue: " << getId();
 }
 
 const std::chrono::steady_clock::time_point Ganja::getTimePlanted() const {
