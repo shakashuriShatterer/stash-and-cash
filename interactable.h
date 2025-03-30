@@ -1,5 +1,6 @@
 #pragma once
 #include "entity.h"
+#include "pch.h"
 #include "player.h"
 #include <memory>
 #include <vector>
@@ -10,7 +11,9 @@ public:
       : Entity(name) {}
   virtual ~Interactable() = default;
   virtual void showInteractionUI(float, float);
+  virtual void drawInteractionMenu(Player &);
   virtual void handleInteraction(Player &player,
                                  std::vector<std::shared_ptr<Entity>> &);
-  bool isInteractable = true;
+  virtual void handleInteraction(Player &player);
+  bool isInteractionMenuShowing = true;
 };

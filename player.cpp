@@ -1,11 +1,9 @@
+// clang-format off
+#include "pch.h"
 #include "player.h"
 #include "entity.h"
-#include "interactable.h"
-#include "pch.h"
 #include "plantPot.h"
-#include <memory>
-#include <vector>
-
+// clang-format on
 Player::Player() : Entity("player") {
   setTexture(LoadTexture("sprite-0001.png"));
   setTextureSize(100, 100);
@@ -45,11 +43,6 @@ void Player::move() {
   }
 }
 
-void Player::interact() {
-  if (IsKeyPressed(KEY_E))
-    DrawRectangle(0, 0, 100, 100, YELLOW);
-}
-
 void Player::buyWeed() {
   static bool keyPessedOnce = false;
 
@@ -62,152 +55,4 @@ void Player::buyWeed() {
   }
   if (IsKeyReleased(KEY_B))
     keyPessedOnce = false;
-}
-
-void Player::Inventory::drawInventoryMenu() {
-  const float spacing = 50;
-  const float startX = 10.f;
-  float startY = 10.f;
-  const int maxItemsPerRow = (GetRenderWidth() - startX) / spacing;
-
-  if (IsKeyPressed(KEY_TAB))
-    isInventoryShowing = true;
-  if (IsKeyPressed(KEY_Q))
-    isInventoryShowing = false;
-
-  if (isInventoryShowing) {
-    DrawRectangle(0, 0, GetRenderWidth(), GetRenderHeight(),
-                  Color{10, 10, 10, 218});
-    const std::string inventoryTip =
-        "Drag and drop items to place in your room. press 'Q' to close.";
-    const int inventoryTipSize = MeasureText(inventoryTip.c_str(), 20);
-    const int inventoryTipPos = GetScreenWidth() / 2 - inventoryTipSize / 2;
-
-    DrawText(inventoryTip.c_str(), inventoryTipPos, GetScreenHeight() - 50, 20,
-             WHITE);
-
-    int currentRow = 0;
-    int currentColumn = 0;
-
-    for (auto it = itemInventoryVector.begin(); it < itemInventoryVector.end();
-         it++) {
-      float posX = startX + currentColumn * spacing;
-      float posY = startY + scrollOffset + currentRow * spacing;
-
-      (*it)->setIsDraggable(true);
-      (*it)->setInventoryPosition({posX, posY});
-
-      DrawTextureEx((*it)->getTexture(), (*it)->getInventoryPosition(), 0, 1,
-                    WHITE);
-
-      currentColumn++;
-
-      if (currentColumn >= maxItemsPerRow) {
-        currentColumn = 0;
-        currentRow++;
-      }
-    }
-  } else {
-    for (auto &item : itemInventoryVector)
-      item->setIsDraggable(false);
-  }
-}
-
-void Player::Inventory::drawWeedSelection() {
-  const float spacing = 50;
-  const float startX = 10.f;
-  float startY = 10.f;
-  const int maxItemsPerRow = (GetRenderWidth() - startX) / spacing;
-
-  if (IsKeyPressed(KEY_E))
-    isWeedInventoryShowing = true;
-  if (IsKeyPressed(KEY_Q))
-    isWeedInventoryShowing = false;
-
-  if (isWeedInventoryShowing) {
-    DrawRectangle(0, 0, GetRenderWidth(), GetRenderHeight(),
-                  Color{10, 10, 10, 218});
-    const std::string inventoryTip =
-        "Click on a weed item to plant in pot. press 'Q' to close.";
-    const int inventoryTipSize = MeasureText(inventoryTip.c_str(), 20);
-    const int inventoryTipPos = GetScreenWidth() / 2 - inventoryTipSize / 2;
-
-    DrawText(inventoryTip.c_str(), inventoryTipPos, GetScreenHeight() - 50, 20,
-             WHITE);
-
-    int currentRow = 0;
-    int currentColumn = 0;
-
-    for (size_t i = 0; i < weedInventoryVector.size(); i++) {
-      float posX = startX + currentColumn * spacing;
-      float posY = startY + scrollOffset + currentRow * spacing;
-
-      auto &weed = weedInventoryVector[i];
-
-      weed->setInventoryPosition({posX, posY});
-
-      DrawTextureEx(weed->getTexture(), weed->getInventoryPosition(), 0, 1,
-                    WHITE);
-
-      currentColumn++;
-
-      if (currentColumn >= maxItemsPerRow) {
-        currentColumn = 0;
-        currentRow++;
-      }
-    }
-  }
-}
-
-std::shared_ptr<Ganja> Player::Inventory::GetSelectedWeed() {
-  for (int i = 0; i < weedInventoryVector.size(); i++) {
-    auto &weed = weedInventoryVector[i];
-    Rectangle boundingBox = {weed->getInventoryPositionX(),
-                             (weed->getInventoryPositionY()),
-                             static_cast<float>(weed->getTextureWidth()),
-                             static_cast<float>(weed->getTextureHeight())};
-
-    if (CheckCollisionPointRec(GetMousePosition(), boundingBox) &&
-        IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-      return weed;
-    }
-  }
-  return nullptr;
-}
-
-void Player::Inventory::scrollInventoryMenu() {
-  const float scrollSpeed = 10.0f;
-
-  if (isInventoryShowing || isWeedInventoryShowing) {
-    if (GetMouseWheelMove() < 0)
-      scrollOffset -= scrollSpeed;
-    if (GetMouseWheelMove() > 0)
-      scrollOffset += scrollSpeed;
-  }
-}
-
-void Player::Inventory::dragItem(
-    std::vector<std::shared_ptr<Interactable>> &EntitiesDrawnToWorld) {
-  for (size_t i = 0; i < itemInventoryVector.size(); i++) {
-    auto &item = itemInventoryVector[i];
-    if (item->getIsBeingDragged()) {
-      item->setPosition(GetMousePosition());
-      DrawTextureEx(item->getTexture(), item->getPosition(), 0, 1, WHITE);
-      if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-        item->setIsBeingDragged(false);
-        EntitiesDrawnToWorld.push_back(item);
-        itemInventoryVector.erase(itemInventoryVector.begin() + i);
-        i--;
-      }
-    }
-    if (CheckCollisionPointRec(
-            GetMousePosition(),
-            {item->getInventoryPositionX(), item->getInventoryPositionY(),
-             static_cast<float>(item->getTextureWidth()),
-             static_cast<float>(item->getTextureHeight())}) &&
-        IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && item->getIsDraggable()) {
-      item->setIsBeingDragged(true);
-      isInventoryShowing = false;
-    }
-  }
 }

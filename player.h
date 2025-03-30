@@ -1,10 +1,8 @@
 #pragma once
 #include "entity.h"
-#include "pch.h"
+#include "inventory.h"
 #include <memory>
 #include <vector>
-
-class Interactable;
 
 class Player : public Entity {
 private:
@@ -12,6 +10,7 @@ private:
   int movementSpeed;
 
 public:
+  Inventory inventory;
   void move();
   void interact();
   void buyWeed();
@@ -23,18 +22,4 @@ public:
   int getMovementSpeed() const;
 
   Player();
-
-  struct Inventory {
-    bool isInventoryShowing = false;
-    bool isWeedInventoryShowing = false;
-    float scrollOffset = 5;
-    std::vector<std::shared_ptr<Interactable>> itemInventoryVector;
-    std::vector<std::shared_ptr<Ganja>> weedInventoryVector;
-    void drawInventoryMenu();
-    void drawWeedSelection();
-    std::shared_ptr<Ganja> GetSelectedWeed();
-    void scrollInventoryMenu();
-    void dragItem(std::vector<std::shared_ptr<Interactable>> &);
-  };
-  Inventory inventory;
 };

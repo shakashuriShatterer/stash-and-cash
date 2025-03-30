@@ -1,3 +1,4 @@
+#pragma once
 #include "entity.h"
 #include "interactable.h"
 
@@ -7,4 +8,8 @@ private:
 
 public:
   PlantPot();
+  void handleInteraction(
+      Player &player,
+      std::vector<std::shared_ptr<Entity>> &entitesDrawnToWorld) override;
+  void drawInteractionMenu(Player &) override;
 };

@@ -52,19 +52,6 @@ public:
   virtual void interactionMenu();
 };
 
-class Computer : public Entity {
-private:
-  Texture desktopTexture;
-
-public:
-  Computer();
-  void interactionMenu() override;
-  // setters
-  void setDesktopTexture(const Texture &);
-  // getters
-  const Texture &getDesktopTexture() const;
-};
-
 class Ganja : public Entity {
 private:
   std::chrono::steady_clock::time_point timePlanted, timePlantedNew;

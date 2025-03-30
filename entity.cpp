@@ -1,5 +1,7 @@
-#include "entity.h"
+// clang-format off
 #include "pch.h"
+#include "entity.h"
+ //clang-format on
 
 int IdManager::nextId = 1;
 
@@ -104,24 +106,6 @@ bool Entity::getIsInteractionMenuShowing() const {
 }
 
 void Entity::interactionMenu() {}
-
-void Computer::setDesktopTexture(const Texture &newDesktopTexure) {
-  desktopTexture = newDesktopTexure;
-}
-
-const Texture &Computer::getDesktopTexture() const { return desktopTexture; }
-
-Computer::Computer() : Entity("pc") {
-  setTexture(LoadTexture("pc.png"));
-  setPosition({10, 10});
-  desktopTexture = LoadTexture("desktop.jpg");
-  setIsBeingDragged(false);
-  setIsDraggable(false);
-}
-
-void Computer::interactionMenu() {
-  DrawTextureEx(desktopTexture, {0, 0}, 0, 1.25f, WHITE);
-}
 
 const std::chrono::steady_clock::time_point Ganja::getTimePlanted() const {
   return timePlanted;

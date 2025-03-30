@@ -1,7 +1,8 @@
-
-#include "gameManager.h"
+// clang-format off
 #include "pch.h"
+#include "gameManager.h"
 #include "player.h"
+// clang-format on
 
 void gameManager::rectCollision(std::shared_ptr<Entity> object,
                                 std::unique_ptr<Player> &player) {

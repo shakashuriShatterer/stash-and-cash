@@ -1,9 +1,14 @@
+// clang-format off
+#include "pch.h"
 #include "entity.h"
 #include "gameManager.h"
 #include "interactable.h"
-#include "pch.h"
+#include "pc.h"
 #include "player.h"
 #include "resource_dir.h"
+#include "store.h"
+#include <raylib.h>
+// clang-format on
 
 int main() {
   SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_HIGHDPI);
@@ -16,21 +21,27 @@ int main() {
   std::shared_ptr<Computer> pc = std::make_shared<Computer>();
   std::vector<std::shared_ptr<Interactable>> EntitiesDrawnToWorld;
   std::vector<std::shared_ptr<Entity>> ganjVec;
+  // EntitiesDrawnToWorld.push_back(pc);
 
-  const int fps = 60;
+  constexpr int fps = 60;
 
   SetTargetFPS(fps);
 
   Texture floor = LoadTexture("floor.png");
+  Store::initialiseItems();
 
   while (!WindowShouldClose()) {
     BeginDrawing();
 
     DrawTextureEx(floor, {0, 0}, 0, 1.25f, WHITE);
     DrawTextureEx(player->getTexture(), player->getPosition(), 0, 1, WHITE);
-    DrawTextureEx(pc->getTexture(), pc->getPosition(), 0, 1, WHITE);
-    gameManager::rectCollision(pc, player);
-    gameManager::objectVicinity(pc, player);
+    if (IsKeyPressed(KEY_F)) {
+      Store::IsStoreShowing = !Store::IsStoreShowing;
+    }
+    if (Store::IsStoreShowing) {
+      Store::drawStore();
+      Store::buyItem(*player);
+    }
     player->move();
     player->buyWeed();
     player->inventory.dragItem(EntitiesDrawnToWorld);
@@ -40,11 +51,16 @@ int main() {
     for (auto &entity : EntitiesDrawnToWorld) {
       DrawTextureEx(entity->getTexture(), entity->getPosition(), 0, 1, WHITE);
       if (gameManager::objectVicinity(entity, player)) {
-        player->inventory.drawWeedSelection();
+        if (IsKeyPressed(KEY_E)) {
+          entity->isInteractionMenuShowing = true;
+        }
         entity->showInteractionUI(entity->getPositionX(),
                                   entity->getPositionY());
+        entity->drawInteractionMenu(*player);
         entity->handleInteraction(*player, ganjVec);
-      }
+        entity->handleInteraction(*player);
+      } else
+        entity->isInteractionMenuShowing = false;
     }
     for (auto &entity : EntitiesDrawnToWorld) {
       gameManager::rectCollision(entity, player);
@@ -55,6 +71,8 @@ int main() {
 
     EndDrawing();
   }
+
+  // Store::UnloadTextures();
 
   UnloadTexture(player->getTexture());
   for (int ent = 0; ent < EntitiesDrawnToWorld.size(); ent++)
