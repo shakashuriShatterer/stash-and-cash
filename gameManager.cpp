@@ -38,7 +38,7 @@ void gameManager::rectCollision(std::shared_ptr<Entity> object,
 // Similar to collision but with a bigger bounding box
 bool gameManager::objectVicinity(std::shared_ptr<Entity> object,
                                  std::unique_ptr<Player> &player) {
-  const int vicinityRange = 50;
+  const int vicinityRange = 10;
   // Check for vicinity
   if (object->getPositionX() <
           player->getPositionX() +

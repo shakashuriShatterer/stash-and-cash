@@ -38,21 +38,27 @@ int main() {
     if (IsKeyPressed(KEY_F)) {
       Store::IsStoreShowing = !Store::IsStoreShowing;
     }
+    if (IsKeyPressed(KEY_TAB)) {
+      player->inventory.isInventoryShowing =
+          !player->inventory.isInventoryShowing;
+    }
     if (Store::IsStoreShowing) {
       Store::drawStore();
       Store::buyItem(*player);
     }
-    player->move();
-    player->buyWeed();
+
     player->inventory.dragItem(EntitiesDrawnToWorld);
     player->inventory.drawInventoryMenu();
     player->inventory.scrollInventoryMenu();
+
+    player->move();
+    player->buyWeed();
 
     for (auto &entity : EntitiesDrawnToWorld) {
       DrawTextureEx(entity->getTexture(), entity->getPosition(), 0, 1, WHITE);
       if (gameManager::objectVicinity(entity, player)) {
         if (IsKeyPressed(KEY_E)) {
-          entity->isInteractionMenuShowing = true;
+          entity->isInteractionMenuShowing = !entity->isInteractionMenuShowing;
         }
         entity->showInteractionUI(entity->getPositionX(),
                                   entity->getPositionY());
@@ -71,8 +77,6 @@ int main() {
 
     EndDrawing();
   }
-
-  // Store::UnloadTextures();
 
   UnloadTexture(player->getTexture());
   for (int ent = 0; ent < EntitiesDrawnToWorld.size(); ent++)

@@ -1,6 +1,7 @@
 // clang-format off
 #include "pch.h"
 #include "player.h"
+#include "ganja.h"
 #include "entity.h"
 #include "plantPot.h"
 // clang-format on
